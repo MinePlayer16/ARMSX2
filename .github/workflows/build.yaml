@@ -6,7 +6,7 @@ on:
 jobs:
   ios:
     name: iOS IPA (unsigned)
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
