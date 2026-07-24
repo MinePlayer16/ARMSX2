@@ -104,19 +104,19 @@ final class EmulatorBridge: @unchecked Sendable {
     }
 
     func setPadButton(_ button: ARMSX2PadButton, pressed: Bool) {
-        ARMSX2Bridge.setPadButton(button, pressed: pressed)
+        ARMSX2Bridge.setPadButton(button, pressed: pressed, forPlayer: 0)
     }
 
     @MainActor
     func setLeftStick(x: Float, y: Float) {
         let inv = SettingsStore.shared.stickInversion(for: .left)
-        ARMSX2Bridge.setLeftStickX(inv.x ? -x : x, y: inv.y ? -y : y)
+        ARMSX2Bridge.setLeftStickX(inv.x ? -x : x, y: inv.y ? -y : y, forPlayer: 0)
     }
 
     @MainActor
     func setRightStick(x: Float, y: Float) {
         let inv = SettingsStore.shared.stickInversion(for: .right)
-        ARMSX2Bridge.setRightStickX(inv.x ? -x : x, y: inv.y ? -y : y)
+        ARMSX2Bridge.setRightStickX(inv.x ? -x : x, y: inv.y ? -y : y, forPlayer: 0)
     }
 
     var isOsdVisible: Bool {
