@@ -10,7 +10,7 @@ STAGING_DIR="$BUILD_DIR/ipa-staging"
 BUILD_LOG="$BUILD_DIR/xcodebuild.log"
 ENTITLEMENTS_FILE="${ENTITLEMENTS_FILE:-$ROOT_DIR/app/src/main/cpp/Entitlements.plist}"
 SIGN_IDENTITY="${SIGN_IDENTITY:-}"
-AD_HOC_SIGN="${AD_HOC_SIGN:-0}"
+AD_HOC_SIGN="1"
 
 refresh_generated_git_metadata() {
 	local short_hash full_hash git_date pbxproj svnrev_file
