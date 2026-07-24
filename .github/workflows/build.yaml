@@ -1,0 +1,22 @@
+name: iOS Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ios:
+    name: iOS IPA (unsigned)
+    runs-on: macos-15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        
+      - name: Build unsigned IPA
+        run: ./platforms/ios/scripts/build-ios-ipa.sh
+        
+      - name: Upload IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: armsx2-ios-arm64
+          path: platforms/ios/build-ios-xcode/ARMSX2-iOS-unsigned.ipa
+          if-no-files-found: warn
