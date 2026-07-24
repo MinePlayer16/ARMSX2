@@ -73,9 +73,9 @@ typedef void (^ARMSX2RetroAchievementsCompletion)(BOOL success, NSString * _Nonn
 + (BOOL)isRunning;
 
 // Pad input
-+ (void)setPadButton:(ARMSX2PadButton)button pressed:(BOOL)pressed;
-+ (void)setLeftStickX:(float)x Y:(float)y;
-+ (void)setRightStickX:(float)x Y:(float)y;
++ (void)setPadButton:(ARMSX2PadButton)button pressed:(BOOL)pressed forPlayer:(NSInteger)playerIndex;
++ (void)setLeftStickX:(float)x Y:(float)y forPlayer:(NSInteger)playerIndex;
++ (void)setRightStickX:(float)x Y:(float)y forPlayer:(NSInteger)playerIndex;
 
 // VM control
 + (void)requestVMStop;
