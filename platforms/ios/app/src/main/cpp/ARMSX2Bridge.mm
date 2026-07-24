@@ -2137,8 +2137,10 @@ static std::string ARMSX2PerGameSettingsPath(const std::string& serial, u32 crc)
     return VMManager::GetState() == VMState::Running;
 }
 
-+ (void)setPadButton:(ARMSX2PadButton)button pressed:(BOOL)pressed {
-    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(0, 0));
++ (void)setPadButton:(ARMSX2PadButton)button pressed:(BOOL)pressed forPlayer:(NSInteger)playerIndex {
+    // playerIndex 0 = P1, playerIndex 1 = P2. Se è 0 puntiamo a Pad::GetPad(0,0), altrimenti Pad::GetPad(1,0)
+    int port = (playerIndex == 1) ? 1 : 0;
+    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(port, 0));
     if (!pad) return;
 
     static const u32 buttonMap[] = {
@@ -2163,47 +2165,61 @@ static std::string ARMSX2PerGameSettingsPath(const std::string& serial, u32 crc)
     if ((int)button < (int)(sizeof(buttonMap)/sizeof(buttonMap[0]))) {
         u32 idx = buttonMap[(int)button];
         pad->Set(idx, pressed ? 1.0f : 0.0f);
-        // Update touch state so PumpMessagesOnCPUThread doesn't override
-        extern bool g_touchPadState[64];
-        if (idx < 64) g_touchPadState[idx] = pressed;
+        
+        // Aggiorniamo la UI solo se è il Player 1 (per non far sfarfallare i tasti virtuali locali)
+        if (port == 0) {
+            extern bool g_touchPadState[64];
+            if (idx < 64) g_touchPadState[idx] = pressed;
+        }
     }
 }
 
-+ (void)setLeftStickX:(float)x Y:(float)y {
-    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(0, 0));
++ (void)setLeftStickX:(float)x Y:(float)y forPlayer:(NSInteger)playerIndex {
+    int port = (playerIndex == 1) ? 1 : 0;
+    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(port, 0));
     if (!pad) return;
-    // Convert axis (-1..+1) to individual direction values (0..1)
+    
     const float right = x > 0 ? x : 0.0f;
     const float left = x < 0 ? -x : 0.0f;
     const float down = y > 0 ? y : 0.0f;
     const float up = y < 0 ? -y : 0.0f;
+    
     pad->Set(PadDualshock2::Inputs::PAD_L_RIGHT, right);
     pad->Set(PadDualshock2::Inputs::PAD_L_LEFT, left);
     pad->Set(PadDualshock2::Inputs::PAD_L_DOWN, down);
     pad->Set(PadDualshock2::Inputs::PAD_L_UP, up);
-    extern bool g_touchPadState[64];
-    g_touchPadState[PadDualshock2::Inputs::PAD_L_RIGHT] = right > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_L_LEFT] = left > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_L_DOWN] = down > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_L_UP] = up > 0.01f;
+    
+    if (port == 0) {
+        extern bool g_touchPadState[64];
+        g_touchPadState[PadDualshock2::Inputs::PAD_L_RIGHT] = right > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_L_LEFT] = left > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_L_DOWN] = down > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_L_UP] = up > 0.01f;
+    }
 }
 
-+ (void)setRightStickX:(float)x Y:(float)y {
-    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(0, 0));
++ (void)setRightStickX:(float)x Y:(float)y forPlayer:(NSInteger)playerIndex {
+    int port = (playerIndex == 1) ? 1 : 0;
+    auto* pad = static_cast<PadDualshock2*>(Pad::GetPad(port, 0));
     if (!pad) return;
+    
     const float right = x > 0 ? x : 0.0f;
     const float left = x < 0 ? -x : 0.0f;
     const float down = y > 0 ? y : 0.0f;
     const float up = y < 0 ? -y : 0.0f;
+    
     pad->Set(PadDualshock2::Inputs::PAD_R_RIGHT, right);
     pad->Set(PadDualshock2::Inputs::PAD_R_LEFT, left);
     pad->Set(PadDualshock2::Inputs::PAD_R_DOWN, down);
     pad->Set(PadDualshock2::Inputs::PAD_R_UP, up);
-    extern bool g_touchPadState[64];
-    g_touchPadState[PadDualshock2::Inputs::PAD_R_RIGHT] = right > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_R_LEFT] = left > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_R_DOWN] = down > 0.01f;
-    g_touchPadState[PadDualshock2::Inputs::PAD_R_UP] = up > 0.01f;
+    
+    if (port == 0) {
+        extern bool g_touchPadState[64];
+        g_touchPadState[PadDualshock2::Inputs::PAD_R_RIGHT] = right > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_R_LEFT] = left > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_R_DOWN] = down > 0.01f;
+        g_touchPadState[PadDualshock2::Inputs::PAD_R_UP] = up > 0.01f;
+    }
 }
 
 + (nonnull NSString *)biosName {
